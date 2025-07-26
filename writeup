@@ -1,0 +1,50 @@
+Names: Hojoun Yoon & Katrina Apostol
+
+Crossover:
+We implemented a uniform crossover in the generate_children() method of Individual_Grid. For each child in the genome, the child randomly inherits the tile from either parent. This helps create a wide variety of offspring while still keeping the level designs playable.
+
+# For each tile, there's a 50% chance to copy from the first parent
+if random.random() < 0.5:
+	new_genome[y][x] = self.genome[y][x] # Take tile from parent 1
+else: 
+	new_genome[y][x] = other.genome[y][x] # Otherwise, take tile from parent 2
+
+
+Mutation:
+In the mutate() method, each tile has 5% chance of mutation. The mutation selects a new tile type based on weighted probabilities. Additional constraints are added to avoid invalid mutation. For example, pipes are only created the tiles below is ground to prevent them from floating. If a pipe top or vertical piece is placed, the tile next to it is also changed so the pipe looks correct.
+
+# The tile types and their weighted probabilities
+tile_types = ['-', 'X', '?', 'M', 'B', 'o', '|', 'T']
+tile_weights = [0.4, 0.25, 0.1, 0.05, 0.05, 0.05, 0.05, 0.05]
+
+
+# 5% chance to change a tile into something new
+if random.random() < 0.05:
+	# Make sure pipes don't float in the air
+	# If the tile below isn't ground ('X'), avoid choosing pipe pieces
+	if y < height - 1 and genome[y + 1][x] != 'X':
+		# Pick a tile that makes sense above ground (no pipes)
+		filtered_tiles = ['-', 'X', '?', 'M', 'B', 'o']
+		filtered_weights = [tile_weights[tile_types.index(t)] for t in filtered_tiles]
+		tile = random.choices(filtered_tiles, weights=filtered_weights)[0]
+	else:
+		# Otherwise, pick any tile including pipes
+		tile = random.choices(tile_types, weights=tile_weights)[0]
+
+	genome[y][x] = tile # Update the tile in the genome
+
+	# If it's the top of a pipe ('T') or vertical pipe ('|'),
+	# also update the tile to the right so the pipe looks right
+	if tile in ['|', 'T'] and x + 1 < width:
+		genome[y][x + 1] = tile
+
+
+Successor Generation:
+The generate_successors() method under Individual_DE selects 20 new individuals by randomly pairing parents and generating children through crossover and mutation. This ensures a consistent population size and introduces new variations each generation.
+
+
+for _ in range(20):
+    parent1 = random.choice(population) # Random pairs with parent 1
+    parent2 = random.choice(population) # Random pairs with parent 2
+    children = parent1.generate_children(parent2) # The children are made
+    results.extend(children) # The children are then generated
