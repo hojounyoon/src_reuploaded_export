@@ -47,4 +47,7 @@ for _ in range(20):
     parent1 = random.choice(population) # Random pairs with parent 1
     parent2 = random.choice(population) # Random pairs with parent 2
     children = parent1.generate_children(parent2) # The children are made
-    results.extend(children) # The children are then generated
+    results.extend(children) # The generated children are added to the next generation
+
+
+We like the level that we sent because by the looks of the text structure, it looks playable and well-structured. It features an interesting platform layouts with a mix of gaps between blocks, pipes and enemies. The end also shows the flagpole. Overall, the structure looks like any Mario level game and it provides a sense of challenge. The level was produced after approximately 45 generations of the genetic algorithm running. The total net time to reach these generations was about 22 to 23 seconds.
